@@ -1,0 +1,32 @@
+[package]
+name = "liquid-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["LiquidNN Team"]
+description = "Core components for Liquid Neural Networks"
+
+[dependencies]
+# Core numerical libraries
+ndarray = { version = "0.16.1", features = ["rayon", "blas"] }
+blas-src = { version = "0.11.1", features = ["intel-mkl"] }
+nalgebra = "0.33.2"
+num-traits = "0.2.19"
+
+# Parallel processing
+rayon = "1.10.0"
+parking_lot = "0.12.3"
+
+# Serialization
+serde = { version = "1.0.219", features = ["derive"] }
+
+# Error handling and logging
+thiserror = "2.0.12"
+tracing = { version = "0.1.41", features = ["attributes"] }
+
+[dev-dependencies]
+criterion = "0.5.1"
+test-log = "0.2.17"
+
+[features]
+default = []
+blas = [] 

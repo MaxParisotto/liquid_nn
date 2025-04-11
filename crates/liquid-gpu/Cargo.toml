@@ -1,0 +1,26 @@
+[package]
+name = "liquid-gpu"
+version = "0.1.0"
+edition = "2021"
+authors = ["LiquidNN Team"]
+description = "GPU acceleration for Liquid Neural Networks"
+
+[dependencies]
+liquid-core = { path = "../liquid-core" }
+
+# GPU support
+wgpu = { version = "25.0.0", features = ["vulkan-portability"] }
+cust = { version = "0.3.2", optional = true }
+
+# Core dependencies
+ndarray = { version = "0.16.1", features = ["rayon"] }
+rayon = "1.10.0"
+
+# Error handling and logging
+thiserror = "2.0.12"
+tracing = { version = "0.1.41", features = ["attributes"] }
+
+[features]
+cuda = ["dep:cust"]
+vulkan = []
+metal = [] 

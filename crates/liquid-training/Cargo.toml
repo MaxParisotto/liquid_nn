@@ -1,0 +1,33 @@
+[package]
+name = "liquid-training"
+version = "0.1.0"
+edition = "2021"
+authors = ["LiquidNN Team"]
+description = "Training infrastructure for Liquid Neural Networks"
+
+[dependencies]
+liquid-core = { path = "../liquid-core" }
+liquid-gpu = { path = "../liquid-gpu" }
+
+# Numerical and parallel processing
+ndarray = { version = "0.16.1", features = ["rayon", "blas"] }
+rayon = "1.10.0"
+
+# Optimization and training
+rand = { version = "0.9.0", features = ["small_rng"] }
+rand_distr = "0.5.1"
+
+# Storage and caching
+qdrant-client = "1.13.0"
+memmap2 = "0.9.5"
+
+# Metrics and logging
+metrics = "0.24.1"
+tracing = { version = "0.1.41", features = ["attributes"] }
+
+[features]
+default = ["cpu"]
+cpu = []
+gpu = ["liquid-gpu/cuda"]
+distributed = []
+mixed_precision = [] 
