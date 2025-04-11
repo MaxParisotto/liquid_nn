@@ -13,7 +13,6 @@ pub mod types;
 pub mod configuration;
 
 use ndarray::{Array2, Array3};
-use serde::{Deserialize, Serialize};
 use std::error::Error;
 use tracing::{debug, trace};
 
@@ -70,10 +69,8 @@ pub trait Initialize {
 
 /// Main LNN model combining all components
 pub struct LiquidNeuralNetwork {
-    config: LiquidConfig,
     router: router::ExpertRouter,
     experts: Vec<moe::MoELayer>,
-    modality_handler: std::sync::Arc<modalities::ModalityHandler>,
 }
 
 impl LiquidNeuralNetwork {
@@ -94,10 +91,8 @@ impl LiquidNeuralNetwork {
             .collect();
             
         Ok(Self {
-            config,
             router,
             experts,
-            modality_handler,
         })
     }
     

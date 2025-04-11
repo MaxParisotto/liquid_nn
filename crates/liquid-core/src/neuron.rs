@@ -119,6 +119,13 @@ impl Neuron {
     pub fn reset(&mut self) {
         self.state = 0.0;
     }
+
+    /// Update the neuron state and return the current state
+    pub fn update(&mut self, input: f64) -> f64 {
+        let derivative = self.compute_derivative_rk4(input);
+        self.step(input, derivative);
+        self.state
+    }
 }
 
 impl Forward for Neuron {
@@ -136,7 +143,7 @@ impl Backward for Neuron {
 }
 
 impl Initialize for Neuron {
-    fn initialize(&mut self, _config: &NeuronConfig) -> Result<()> {
+    fn initialize(&mut self) -> Result<()> {
         // Reset state
         self.reset();
         Ok(())

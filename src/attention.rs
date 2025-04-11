@@ -277,12 +277,13 @@ impl MultiHeadAttention {
         Ok(result)
     }
 
+    /// Compute weighted sum of value vectors with attention weights
     fn weighted_sum(&self, weights: &Array3<f64>, values: &Array3<f64>) -> Result<Array3<f64>> {
         // Validate input shapes
         let w_shape = weights.shape();
         let v_shape = values.shape();
         
-        if w_shape[0] != v_shape[0] || w_shape[1] != v_shape[1] {
+        if w_shape[0] != v_shape[0] || w_shape[1] != v_shape[1] || w_shape[2] != v_shape[2] {
             return Err(AttentionError::InvalidShape);
         }
         
@@ -290,43 +291,16 @@ impl MultiHeadAttention {
         let num_heads = w_shape[1];
         let seq_len = w_shape[2];
         
-        // Create output array
+        // Pre-allocate the output array
         let mut output = Array3::zeros((batch_size, num_heads, seq_len));
         
-        // Pre-allocate sum arrays for better cache locality
-        let mut sums = vec![0.0; seq_len];
-        
-        // Compute weighted sum for each batch and head
+        // Compute weighted sum
         for b in 0..batch_size {
             for h in 0..num_heads {
-                // Clear the sums for this batch and head
-                for s in &mut sums {
-                    *s = 0.0;
-                }
-                
-                // Extract views for current batch and head for better cache locality
-                let w_slice = weights.slice(s![b, h, ..]);
-                let v_slice = values.slice(s![b, h, ..]);
-                
-                // First compute all weighted sums
-                for j in 0..seq_len {
-                    let weight = w_slice[j];
-                    for i in 0..seq_len {
-                        sums[i] += weight * v_slice[j];
-                    }
-                }
-                
-                // Then write them to the output array
                 for i in 0..seq_len {
-                    output[[b, h, i]] = sums[i];
+                    output[[b, h, i]] = weights[[b, h, i]] * values[[b, h, i]];
                 }
             }
-        }
-        
-        // Check for NaN values
-        if output.iter().any(|&v| v.is_nan()) {
-            debug!("NaN detected in weighted sum");
-            return Err(AttentionError::InvalidDimension);
         }
         
         Ok(output)

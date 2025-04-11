@@ -1,11 +1,8 @@
 use ndarray::{Array1, Array2};
-use std::time::Instant;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use rand::Rng;
 
 /// Performance tracking for model operations
 pub struct PerformanceTracker {
-    start_time: Instant,
     operation_count: AtomicUsize,
     total_time: AtomicUsize, // in microseconds
 }
@@ -13,7 +10,6 @@ pub struct PerformanceTracker {
 impl PerformanceTracker {
     pub fn new() -> Self {
         Self {
-            start_time: Instant::now(),
             operation_count: AtomicUsize::new(0),
             total_time: AtomicUsize::new(0),
         }

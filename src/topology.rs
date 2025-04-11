@@ -7,11 +7,10 @@ use std::time::Instant;
 pub struct LiquidLayer {
     neurons: Vec<Neuron>,
     time_constants: Array1<f64>,
-    layer_index: usize,
 }
 
 impl LiquidLayer {
-    pub fn new(size: usize, weight_matrix: Array2<f64>, input_weight: Array1<f64>, layer_idx: usize) -> Self {
+    pub fn new(size: usize, weight_matrix: Array2<f64>, input_weight: Array1<f64>) -> Self {
         let neurons = (0..size)
             .map(|_| Neuron::new(weight_matrix.clone(), input_weight.clone()))
             .collect();
@@ -20,7 +19,6 @@ impl LiquidLayer {
         LiquidLayer {
             neurons,
             time_constants,
-            layer_index: layer_idx,
         }
     }
 
@@ -53,8 +51,8 @@ impl Topology {
     pub fn new(layer_sizes: Vec<usize>, weight_matrix: Array2<f64>, input_weight: Array1<f64>) -> Self {
         let layers = layer_sizes.into_iter()
             .enumerate()
-            .map(|(idx, size)| {
-                LiquidLayer::new(size, weight_matrix.clone(), input_weight.clone(), idx)
+            .map(|(_, size)| {
+                LiquidLayer::new(size, weight_matrix.clone(), input_weight.clone())
             })
             .collect();
 
@@ -132,26 +130,6 @@ impl Topology {
     }
 
     /// Adjust integration timestep based on state stability
-    pub fn adapt_timestep(&mut self) {
-        let recent_max_vals: Vec<f64> = self.performance_stats.max_state_values.iter()
-            .rev()
-            .take(100)
-            .cloned()
-            .collect();
-
-        if let (Some(max), Some(min)) = (recent_max_vals.iter().max_by(|a, b| a.partial_cmp(b).unwrap()),
-                                       recent_max_vals.iter().min_by(|a, b| a.partial_cmp(b).unwrap())) {
-            let range = max - min;
-            // Adjust dt based on state range
-            if range > 10.0 {
-                self.dt *= 0.5; // Decrease timestep for stability
-            } else if range < 0.1 {
-                self.dt *= 1.2; // Increase timestep for efficiency
-            }
-            // Ensure dt stays within reasonable bounds
-            self.dt = self.dt.clamp(0.001, 0.1);
-        }
-    }
 
     /// Get performance statistics
     pub fn get_performance_stats(&self) -> (f64, f64, f64) {
