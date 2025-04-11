@@ -7,8 +7,9 @@ description = "High-performance Liquid Neural Network implementation in Rust"
 
 [dependencies]
 # Core numerical libraries
-ndarray = { version = "0.15.6", features = ["rayon"] }
-blas-src = { version = "0.11.1", features = ["intel-mkl"] }
+liquid-core = { path = "crates/liquid-core" }
+ndarray = { version = "0.16.1", features = ["rayon", "blas"] }
+blas-src = { version = "0.11.1", features = ["accelerate"] }
 nalgebra = "0.33.2"
 num-traits = "0.2"
 num_cpus = "1.16"
@@ -51,6 +52,7 @@ pprof = { version = "0.14.0", features = ["flamegraph"], optional = true }
 criterion = "0.5"
 test-log = "0.2"
 proptest = "1.2"
+liquid-core = { path = "crates/liquid-core" }
 
 [features]
 default = ["cpu"]

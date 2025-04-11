@@ -8,7 +8,7 @@ description = "Core components for Liquid Neural Networks"
 [dependencies]
 # Core numerical libraries
 ndarray = { version = "0.16.1", features = ["rayon", "blas"] }
-blas-src = { version = "0.11.1", features = ["intel-mkl"] }
+blas-src = { version = "0.11.1", features = ["accelerate"] }
 nalgebra = "0.33.2"
 num-traits = "0.2.19"
 

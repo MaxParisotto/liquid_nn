@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion, BenchmarkId};
-use liquid_nn::neuron::Neuron;
+use liquid_nn::liquid_core::neuron::Neuron;
 use ndarray::{Array1, Array2};
 use rand::random;
 
@@ -26,8 +26,8 @@ fn bench_neuron_forward(c: &mut Criterion) {
                 &(input_size, hidden_size),
                 |b, _| {
                     b.iter(|| {
-                        // Use compute_derivative and step
-                        let derivative = black_box(neuron.compute_derivative(black_box(input[0])));
+                        // Use compute_derivative_rk4 and step
+                        let derivative = black_box(neuron.compute_derivative_rk4(black_box(input[0])));
                         black_box(neuron.step(input[0], derivative));
                     });
                 },
@@ -63,8 +63,8 @@ fn bench_neuron_batch(c: &mut Criterion) {
                 b.iter(|| {
                     for i in 0..batch_size {
                         let input = batch_input.row(i).to_owned();
-                        // Use compute_derivative and step
-                        let derivative = black_box(neuron.compute_derivative(black_box(input[0])));
+                        // Use compute_derivative_rk4 and step
+                        let derivative = black_box(neuron.compute_derivative_rk4(black_box(input[0])));
                         black_box(neuron.step(input[0], derivative));
                     }
                 });
@@ -94,8 +94,8 @@ fn bench_activation_functions(c: &mut Criterion) {
         &input_size,
         |b, _| {
             b.iter(|| {
-                // Use compute_derivative and step
-                let derivative = black_box(neuron.compute_derivative(black_box(input[0])));
+                // Use compute_derivative_rk4 and step
+                let derivative = black_box(neuron.compute_derivative_rk4(black_box(input[0])));
                 black_box(neuron.step(input[0], derivative));
             });
         },

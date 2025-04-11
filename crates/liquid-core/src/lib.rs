@@ -2,6 +2,7 @@ pub mod neuron;
 pub mod topology;
 pub mod solvers;
 pub mod error;
+pub mod attention;
 pub mod types;
 pub mod state;
 pub mod liquid_layer;
