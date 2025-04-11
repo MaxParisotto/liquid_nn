@@ -3,10 +3,21 @@ pub mod topology;
 pub mod solvers;
 pub mod error;
 pub mod types;
+pub mod state;
+pub mod liquid_layer;
+pub mod scheduler;
+//
+
+/// Core LNN types and feedback API
+pub use topology::{Topology, FeedbackMode};
+pub use state::RecurrentState;
+pub use crate::liquid_layer::{LiquidLayer, LayerMode, LnnModeConfig};
+pub use crate::scheduler::{
+    LnnScheduler, SchedulerDecision, FeedbackPolicy, LnnMetrics, LnnState, SchedulerConfig,
+};
 
 use ndarray::Array1;
 use serde::{Deserialize, Serialize};
-use std::error::Error;
 
 pub use crate::error::LiquidError;
 pub type Result<T> = std::result::Result<T, LiquidError>;

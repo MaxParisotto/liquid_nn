@@ -1,9 +1,8 @@
 use liquid_core::{Result, LiquidError};
 use ndarray::{Array1, Array2};
-use tracing::{debug, info, warn};
+use tracing::{info, warn};
 
 mod cuda;
-mod wgpu;
 mod error;
 
 pub use error::GpuError;
@@ -81,7 +80,7 @@ impl GpuAccelerated for Array1<f64> {
         }
         #[cfg(not(feature = "cuda"))]
         {
-            wgpu::array_to_gpu(self)
+            Err(LiquidError::RuntimeError("WebGPU backend not implemented".to_string()))
         }
     }
 
@@ -93,7 +92,7 @@ impl GpuAccelerated for Array1<f64> {
         }
         #[cfg(not(feature = "cuda"))]
         {
-            wgpu::array_from_gpu(tensor)
+            Err(LiquidError::RuntimeError("WebGPU backend not implemented".to_string()))
         }
     }
 }
@@ -107,7 +106,7 @@ impl GpuAccelerated for Array2<f64> {
         }
         #[cfg(not(feature = "cuda"))]
         {
-            wgpu::array_to_gpu(self)
+            Err(LiquidError::RuntimeError("WebGPU backend not implemented".to_string()))
         }
     }
 
@@ -119,7 +118,7 @@ impl GpuAccelerated for Array2<f64> {
         }
         #[cfg(not(feature = "cuda"))]
         {
-            wgpu::array_from_gpu(tensor)
+            Err(LiquidError::RuntimeError("WebGPU backend not implemented".to_string()))
         }
     }
 }
@@ -139,15 +138,15 @@ pub fn init_gpu(config: &GpuConfig) -> Result<()> {
             }
             #[cfg(not(feature = "cuda"))]
             {
-                return Err(GpuError::UnsupportedBackend("CUDA support not enabled".into()).into());
+                return Err(LiquidError::RuntimeError("CUDA support not enabled".to_string()));
             }
         }
         GpuBackend::WebGPU => {
-            wgpu::init_device(config)?;
+            return Err(LiquidError::RuntimeError("WebGPU backend not implemented".to_string()));
         }
         _ => {
             warn!("Backend {:?} not yet implemented, falling back to WebGPU", config.backend);
-            wgpu::init_device(config)?;
+            return Err(LiquidError::RuntimeError("WebGPU backend not implemented".to_string()));
         }
     }
     

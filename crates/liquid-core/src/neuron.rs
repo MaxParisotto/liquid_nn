@@ -1,5 +1,5 @@
 use crate::{
-    Forward, Backward, Initialize, Result, LiquidError,
+    Forward, Backward, Initialize, Result,
     ActivationType, NeuronConfig,
 };
 use ndarray::{Array1, Array2};
@@ -8,6 +8,7 @@ use rand::thread_rng;
 use rand_distr::{Distribution, Normal};
 
 /// Liquid neuron implementation with adaptive time constant
+#[allow(dead_code)]
 pub struct Neuron {
     config: NeuronConfig,
     weights: Array2<f64>,
@@ -17,6 +18,7 @@ pub struct Neuron {
     input_weights: Array1<f64>,
 }
 
+#[allow(dead_code)]
 impl Neuron {
     pub fn new(weights: Array2<f64>, input_weights: Array1<f64>) -> Self {
         let input_dim = input_weights.len();
@@ -83,12 +85,12 @@ impl Neuron {
     }
 
     /// Perform one step of Euler integration
-    fn integrate_step(&mut self, derivative: Array1<f64>, dt: f64) {
-        self.state += &(derivative * dt);
+    fn integrate_step(&mut self, derivative: f64, dt: f64) {
+        self.state += derivative * dt;
     }
 
     /// Update neuron state based on input
-    pub fn step(&mut self, input: f64, delta: f64) {
+    pub fn step(&mut self, _input: f64, delta: f64) {
         self.state += delta;
         
         // Apply non-linearity (tanh)
@@ -153,7 +155,6 @@ impl Initialize for Neuron {
 /// Helper functions for neuron operations
 pub mod utils {
     use super::*;
-    use rand::Rng;
     
     /// Initializes random weights for a neuron
     pub fn init_weights(dim: (usize, usize)) -> Array2<f64> {
@@ -171,7 +172,7 @@ mod tests {
 
     #[test]
     fn test_neuron_initialization() {
-        let config = NeuronConfig {
+        let _config = NeuronConfig {
             input_dim: 10,
             hidden_dim: 20,
             activation: ActivationType::Tanh,
@@ -188,7 +189,7 @@ mod tests {
 
     #[test]
     fn test_neuron_forward() {
-        let config = NeuronConfig {
+        let _config = NeuronConfig {
             input_dim: 5,
             hidden_dim: 10,
             activation: ActivationType::Tanh,
@@ -202,7 +203,7 @@ mod tests {
         let output = neuron.forward(&input).unwrap();
         
         assert_eq!(output.len(), 10);
-        assert!(output.iter().all(|&x| x >= -1.0 && x <= 1.0));
+        assert!(output.iter().all(|&x| (-1.0..=1.0).contains(&x)));
     }
 
     #[test]
@@ -226,13 +227,13 @@ mod tests {
             // Test activation function properties
             match activation {
                 ActivationType::Tanh => {
-                    assert!(output.iter().all(|&x| x >= -1.0 && x <= 1.0));
+                    assert!(output.iter().all(|&x| (-1.0..=1.0).contains(&x)));
                 },
                 ActivationType::ReLU => {
                     assert!(output.iter().all(|&x| x >= 0.0));
                 },
                 ActivationType::Sigmoid => {
-                    assert!(output.iter().all(|&x| x >= 0.0 && x <= 1.0));
+                    assert!(output.iter().all(|&x| (0.0..=1.0).contains(&x)));
                 },
                 ActivationType::Linear => {
                     // No specific bounds for linear activation
